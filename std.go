@@ -14,7 +14,7 @@ func (l *stdLimiter) Name() string {
 	return "std"
 }
 
-func newStdLimiter(r int, burst int) *stdLimiter {
+func newLimiterStd(r int, burst int) *stdLimiter {
 	return &stdLimiter{
 		limiter: rate.NewLimiter(rate.Limit(r), burst),
 	}

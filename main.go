@@ -13,19 +13,19 @@ func main() {
 	var dur time.Duration
 	var typ string
 	flag.DurationVar(&dur, "dur", 10*time.Second, "Run duration")
-	flag.StringVar(&typ, "type", "fw", "Type of limiter(fw|sl|tb|std)")
+	flag.StringVar(&typ, "type", "fw", "Type of limiter(fw|sw|tb|std)")
 	flag.Parse()
 
 	var lmt limiter
 	switch typ {
 	case "fw":
 		lmt = newLimiterFixedWindow(10000)
-	case "sl":
+	case "sw":
 		lmt = newLimiterSlidingWindow(10000)
 	case "tb":
-		lmt = newLimiterTokenBucket(10000, 100)
+		lmt = newLimiterTokenBucket(10000, 2000)
 	case "std":
-		lmt = newLimiterStd(10000, 100)
+		lmt = newLimiterStd(10000, 2000)
 	default:
 		fmt.Printf("unknown type: %v\n", typ)
 		return
@@ -55,6 +55,11 @@ func main() {
 			cntAllow = 0
 			cntReject = 0
 		}
+
+		/*if int(t1.Sub(t0).Seconds()) == 2 {
+			fmt.Println("sleep 2 seconds now")
+			time.Sleep(3 * time.Second)
+		}*/
 
 	}
 	fmt.Println("duration: ", time.Now().Sub(t0))

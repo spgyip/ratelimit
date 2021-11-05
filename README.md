@@ -1,0 +1,4 @@
+- FixedWindow
+- SlidingWindow
+- TokenBucket
+- `golang.org/x/time/rate`

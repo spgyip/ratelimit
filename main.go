@@ -25,7 +25,7 @@ func main() {
 	case "tb":
 		lmt = newLimiterTokenBucket(10000, 1, 100)
 	default:
-		fmt.Errorf("unknown type: %v\n", typ)
+		fmt.Printf("unknown type: %v\n", typ)
 		return
 	}
 

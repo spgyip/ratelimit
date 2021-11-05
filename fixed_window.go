@@ -4,35 +4,33 @@ import "time"
 
 // FixedWindow
 type limiterFixedWindow struct {
-	lastW       int
-	capacity    int
-	winSizeNSec int
-	count       int
+	lastSec int
+	r       int
+	count   int
 }
 
 func (l *limiterFixedWindow) Name() string {
 	return "FixedWindow"
 }
 
-// Allow `capacity` in each `winSizeNSec` seconds time window
-func newLimiterFixedWindow(capacity int, winSizeNSec int) *limiterFixedWindow {
+// Allow `r` request every 1 second window size.
+func newLimiterFixedWindow(r int) *limiterFixedWindow {
 	return &limiterFixedWindow{
-		lastW:       int(time.Now().Unix() / int64(winSizeNSec)),
-		capacity:    capacity,
-		winSizeNSec: winSizeNSec,
-		count:       0,
+		lastSec: int(time.Now().Unix()),
+		r:       r,
+		count:   0,
 	}
 }
 
 func (l *limiterFixedWindow) Allow(n int) bool {
-	curW := int(time.Now().Unix() / int64(l.winSizeNSec))
-	if curW != l.lastW {
+	curSec := int(time.Now().Unix())
+	if curSec != l.lastSec {
 		l.count = 0
-		l.lastW = curW
+		l.lastSec = curSec
 	}
 
 	nc := l.count + n
-	if nc > l.capacity {
+	if nc > l.r {
 		return false
 	}
 

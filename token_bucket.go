@@ -4,21 +4,19 @@ import "time"
 
 // TokenBucket
 type limiterTokenBucket struct {
-	N         int
-	burst     int
-	tokens    int
-	everyNSec int
-	lastT     time.Time
+	N      int
+	burst  int
+	tokens int
+	lastT  time.Time
 }
 
-// Fill `N` tokens every `everyNSec` seconds.
-func newLimiterTokenBucket(N int, everyNSec, burst int) *limiterTokenBucket {
+// Fill `N` tokens every 1 second.
+func newLimiterTokenBucket(N int, burst int) *limiterTokenBucket {
 	return &limiterTokenBucket{
-		N:         N,
-		burst:     burst,
-		tokens:    burst,
-		everyNSec: everyNSec,
-		lastT:     time.Now(),
+		N:      N,
+		burst:  burst,
+		tokens: burst,
+		lastT:  time.Now(),
 	}
 }
 
@@ -31,7 +29,7 @@ func (l *limiterTokenBucket) Allow(n int) bool {
 
 	// Fill tokens
 	elapse := now.Sub(l.lastT).Milliseconds()
-	addN := int(float64(l.N) * (float64(elapse) / float64(l.everyNSec*1000)))
+	addN := int(float64(l.N) * (float64(elapse) / float64(1000)))
 	if addN > 0 {
 		l.tokens += addN
 		if l.tokens >= l.burst {

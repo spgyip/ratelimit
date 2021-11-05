@@ -19,11 +19,11 @@ func main() {
 	var lmt limiter
 	switch typ {
 	case "fw":
-		lmt = newLimiterFixedWindow(10000, 1)
+		lmt = newLimiterFixedWindow(10000)
 	case "sl":
-		lmt = newLimiterSlidingWindow(10000, 1)
+		lmt = newLimiterSlidingWindow(10000)
 	case "tb":
-		lmt = newLimiterTokenBucket(10000, 1, 100)
+		lmt = newLimiterTokenBucket(10000, 100)
 	case "std":
 		lmt = newLimiterStd(10000, 100)
 	default:

@@ -6,10 +6,9 @@ import "time"
 // Improval for `FixedWindow`
 // Taking account for `lastCount` into current count
 type limiterSlidingWindow struct {
-	lastW       int
-	capacity    int
-	winSizeNSec int
-	count       int
+	lastSec int
+	r       int
+	count   int
 
 	lastCount int
 }
@@ -18,34 +17,31 @@ func (l *limiterSlidingWindow) Name() string {
 	return "SlidingWindow"
 }
 
-// Allow `capacity` in each `winSizeNSec` seconds time window
-func newLimiterSlidingWindow(capacity int, winSizeNSec int) *limiterSlidingWindow {
+// Allow `r` request every 1 second window size.
+func newLimiterSlidingWindow(r int) *limiterSlidingWindow {
 	return &limiterSlidingWindow{
-		lastW:       int(time.Now().Unix() / int64(winSizeNSec)),
-		capacity:    capacity,
-		winSizeNSec: winSizeNSec,
-		count:       0,
+		lastSec: int(time.Now().Unix()),
+		r:       r,
+		count:   0,
 
 		// For smoothly startup, give an initial `lastCount `
-		lastCount: capacity,
+		lastCount: r,
 	}
 }
 
 func (l *limiterSlidingWindow) Allow(n int) bool {
 	now := time.Now()
 
-	curW := int(now.Unix() / int64(l.winSizeNSec))
-	if curW != l.lastW {
+	curSec := int(now.Unix())
+	if curSec != l.lastSec {
 		l.lastCount = l.count
 		l.count = 0
-		l.lastW = curW
+		l.lastSec = curSec
 	}
 
-	winSizeMSec := int64(l.winSizeNSec * 1000)
-	percent := float64((now.UnixNano()/1000000)%winSizeMSec) / float64(winSizeMSec)
-
+	percent := float64((now.UnixNano()/1000000)%1000) / float64(1000)
 	nc := int(float64(l.lastCount)*(1-percent)) + l.count + n
-	if nc > l.capacity {
+	if nc > l.r {
 		return false
 	}
 

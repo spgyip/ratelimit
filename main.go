@@ -13,7 +13,7 @@ func main() {
 	var dur time.Duration
 	var typ string
 	flag.DurationVar(&dur, "dur", 10*time.Second, "Run duration")
-	flag.StringVar(&typ, "type", "fw", "Type of limiter(fw|sw|tb|std)")
+	flag.StringVar(&typ, "type", "fw", "Type of limiter(fw|sl|tb|std|uber)")
 	flag.Parse()
 
 	var lmt limiter
@@ -23,9 +23,14 @@ func main() {
 	case "sw":
 		lmt = newLimiterSlidingWindow(10000)
 	case "tb":
-		lmt = newLimiterTokenBucket(10000, 2000)
+		// Token-bucket
+		lmt = newLimiterTokenBucket(10000, 100)
 	case "std":
-		lmt = newLimiterStd(10000, 2000)
+		// Token-bucket
+		lmt = newLimiterStd(10000, 100)
+	case "uber":
+		// Leaky-bucket
+		lmt = newLimiterUber(10000)
 	default:
 		fmt.Printf("unknown type: %v\n", typ)
 		return

@@ -4,3 +4,7 @@ Simulations for different `ratelimit` algorithms.
 - SlidingWindow
 - TokenBucket
 - `golang.org/x/time/rate`
+
+## TODO
+
+- Use concurrency.

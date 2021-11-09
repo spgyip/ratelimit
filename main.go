@@ -24,10 +24,10 @@ func main() {
 		lmt = newLimiterSlidingWindow(10000)
 	case "tb":
 		// Token-bucket
-		lmt = newLimiterTokenBucket(10000, 100)
+		lmt = newLimiterTokenBucket(10000, 1000)
 	case "std":
 		// Token-bucket
-		lmt = newLimiterStd(10000, 100)
+		lmt = newLimiterStd(10000, 1000)
 	case "uber":
 		// Leaky-bucket
 		lmt = newLimiterUber(10000)

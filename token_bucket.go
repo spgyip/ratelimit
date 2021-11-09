@@ -13,10 +13,11 @@ type limiterTokenBucket struct {
 // Fill `N` tokens every 1 second.
 func newLimiterTokenBucket(N int, burst int) *limiterTokenBucket {
 	return &limiterTokenBucket{
-		N:      N,
-		burst:  burst,
-		tokens: burst,
-		lastT:  time.Now(),
+		N:     N,
+		burst: burst,
+
+		// Leave tokens=0, lastT=0.
+		// The initial `tokens` will be filled when the first `Allow()`.
 	}
 }
 
@@ -28,8 +29,8 @@ func (l *limiterTokenBucket) Allow(n int) bool {
 	now := time.Now()
 
 	// Fill tokens
-	elapse := now.Sub(l.lastT).Milliseconds()
-	addN := int(float64(l.N) * (float64(elapse) / float64(1000)))
+	elapse := now.Sub(l.lastT)
+	addN := int(float64(l.N) * elapse.Seconds())
 	if addN > 0 {
 		l.tokens += addN
 		if l.tokens >= l.burst {

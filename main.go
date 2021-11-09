@@ -30,6 +30,7 @@ func main() {
 		lmt = newLimiterStd(10000, 1000)
 	case "uber":
 		// Leaky-bucket
+		// Thus, there will be no error, because every events will be queued until being available.
 		lmt = newLimiterUber(10000)
 	default:
 		fmt.Printf("unknown type: %v\n", typ)

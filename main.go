@@ -13,7 +13,7 @@ func main() {
 	var dur time.Duration
 	var typ string
 	flag.DurationVar(&dur, "dur", 10*time.Second, "Run duration")
-	flag.StringVar(&typ, "type", "fw", "Type of limiter(fw|sl|tb|std|uber)")
+	flag.StringVar(&typ, "type", "fw", "Type of limiter(fw|sw|tb|std|uber)")
 	flag.Parse()
 
 	var lmt limiter
@@ -61,12 +61,6 @@ func main() {
 			cntAllow = 0
 			cntReject = 0
 		}
-
-		/*if int(t1.Sub(t0).Seconds()) == 2 {
-			fmt.Println("sleep 2 seconds now")
-			time.Sleep(3 * time.Second)
-		}*/
-
 	}
 	fmt.Println("duration: ", time.Now().Sub(t0))
 }
